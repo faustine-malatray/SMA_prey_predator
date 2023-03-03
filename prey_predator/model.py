@@ -86,15 +86,25 @@ class WolfSheep(Model):
         self.datacollector = DataCollector(
             {
                 "Wolves": lambda m: m.schedule.get_breed_count(Wolf),
-                "Sheep": lambda m: m.schedule.get_breed_count(Sheep),
+                "Sheep": lambda m: m.get_breed_count(Sheep),
             }
         )
 
         # Create sheep:
-        # ... to be completed
+        for i in range(initial_sheep):
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+            sheep = Sheep(self.next_id(), pos=(x, y), model=self, moore=True)
+            self.schedule.add(sheep)
+            self.grid.place_agent(sheep, (x, y))
 
         # Create wolves
-        # ... to be completed
+        for i in range(initial_wolves):
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+            wolf = Wolf(self.next_id(), pos=(x, y), model=self, moore=True)
+            self.schedule.add(wolf)
+            self.grid.place_agent(wolf, (x, y))
 
         # Create grass patches
         # ... to be completed
@@ -107,7 +117,6 @@ class WolfSheep(Model):
 
         # ... to be completed
 
-    def run_model(self, step_count=200):
-
-        # ... to be completed
-
+    def run_model(self, step_count=10):
+        for i in range(step_count):
+            self.step()

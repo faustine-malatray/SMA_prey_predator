@@ -40,3 +40,8 @@ class RandomWalker(Agent):
         next_move = self.random.choice(next_moves)
         # Now move:
         self.model.grid.move_agent(self, next_move)
+
+    def dies(self):
+        # On enlève l'agent du grid et du scheduler
+        self.model.grid.remove_agent(self)
+        self.scheduler.remove(self)

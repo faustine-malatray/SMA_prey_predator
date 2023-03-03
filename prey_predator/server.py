@@ -6,20 +6,36 @@ from prey_predator.agents import Wolf, Sheep, GrassPatch
 from prey_predator.model import WolfSheep
 
 
+def agent_portrayal(agent):
+    portrayal = {"Shape": "circle", "Filled": "true", "r": 0.5}
+
+    if agent.wealth > 0:
+        portrayal["Color"] = "red"
+        portrayal["Layer"] = 0
+    else:
+        portrayal["Color"] = "grey"
+        portrayal["Layer"] = 1
+        portrayal["r"] = 0.2
+    return portrayal
+
+
 def wolf_sheep_portrayal(agent):
     if agent is None:
         return
 
-    portrayal = {}
+    portrayal = {"Shape": "circle", "Filled": "true", "Layer": 0}
 
     if type(agent) is Sheep:
-        # ... to be completed
+        portrayal["Color"] = "grey"
+        portrayal["r"] = 0.2
 
     elif type(agent) is Wolf:
-        # ... to be completed
+        portrayal["Color"] = "black"
+        portrayal["r"] = 0.5
 
     elif type(agent) is GrassPatch:
-        # ... to be completed
+        portrayal["Color"] = "green"
+        portrayal["r"] = 1
 
     return portrayal
 
@@ -29,9 +45,7 @@ chart_element = ChartModule(
     [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
 )
 
-model_params = {
-    # ... to be completed
-}
+model_params = {"initial_sheep" : 1, "initial_wolves" : 0}# à modifier
 
 server = ModularServer(
     WolfSheep, [canvas_element, chart_element], "Prey Predator Model", model_params
