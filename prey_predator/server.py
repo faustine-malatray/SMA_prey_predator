@@ -43,14 +43,21 @@ chart_element = ChartModule(
 
 model_params = {"height": 20,
                 "width": 20,
+                "sheep_energy": UserSettableParameter("number", "Energy of a Sheep", value=10),
+                "wolf_energy": UserSettableParameter("number", "Energy of a Wolf", value=10),
                 "initial_sheep": UserSettableParameter("number", "Initial Number of Sheeps", value=10),
-                "initial_wolves": UserSettableParameter("number", "Initial Number of Wolves", value=3),
-                "sheep_reproduce": UserSettableParameter("slider", "Sheep Reproducing Probability", value=0.5, min_value=0, max_value=1, step=0.01),
-                "wolf_reproduce": UserSettableParameter("slider", "Wolves Reproducing Probability", value=0.1, min_value=0, max_value=1, step=0.01),
+                "initial_wolves": UserSettableParameter("number", "Initial Number of Wolves", value=10),
+                "sheep_reproduce": UserSettableParameter("slider", "Sheep Reproducing Probability", value=0.2, min_value=0, max_value=1, step=0.01),
+                "wolf_reproduce": UserSettableParameter("slider", "Wolves Reproducing Probability", value=0.05, min_value=0, max_value=1, step=0.01),
+                "sheep_gain_from_food": UserSettableParameter("number", "Sheep Energy points with Food", value=3),
                 "wolf_gain_from_food": UserSettableParameter("number", "Wolves Energy points with Food", value=5),
+                "sheep_move_energy": UserSettableParameter("number", "Sheep energy loss with movement", value=1),
+                "wolf_move_energy": UserSettableParameter("number", "Wolves energy loss with movement", value=1),
+                "sheep_reproduction_energy": UserSettableParameter("number", "Sheep energy loss with reproduction", value=2),
+                "wolf_reproduction_energy": UserSettableParameter("number", "Wolves energy loss with reproduction", value=3),
                 "grass": UserSettableParameter("checkbox", "Are Sheeps eating Grass", value=True),
-                "grass_regrowth_time": UserSettableParameter("number", "Grass Regrowth Time", value=5),
-                "sheep_gain_from_food": UserSettableParameter("number", "Sheep Energy points with Food", value=3)}
+                "grass_regrowth_time": UserSettableParameter("number", "Grass Regrowth Time", value=2)
+                }
 
 server = ModularServer(WolfSheep,
                        [canvas_element,

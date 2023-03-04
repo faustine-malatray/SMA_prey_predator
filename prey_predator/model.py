@@ -53,6 +53,12 @@ class WolfSheep(Model):
         grass,
         grass_regrowth_time,
         sheep_gain_from_food,
+        sheep_reproduction_energy,
+        wolf_reproduction_energy,
+        sheep_move_energy,
+        wolf_move_energy,
+        sheep_energy,
+        wolf_energy
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -80,6 +86,12 @@ class WolfSheep(Model):
         self.grass = grass
         self.grass_regrowth_time = grass_regrowth_time
         self.sheep_gain_from_food = sheep_gain_from_food
+        self.sheep_reproduction_energy = sheep_reproduction_energy
+        self.wolf_reproduction_energy = wolf_reproduction_energy
+        self.sheep_move_energy = sheep_move_energy
+        self.wolf_move_energy = wolf_move_energy
+        self.sheep_energy = sheep_energy
+        self.wolf_energy = wolf_energy
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
@@ -95,7 +107,7 @@ class WolfSheep(Model):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
             sheep = Sheep(self.next_id(), pos=(x, y),
-                          model=self, moore=True, energy=10)
+                          model=self, moore=True, energy=self.sheep_energy)
             self.schedule.add(sheep)
             self.grid.place_agent(sheep, (x, y))
 
@@ -104,7 +116,7 @@ class WolfSheep(Model):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
             wolf = Wolf(self.next_id(), pos=(x, y),
-                        model=self, moore=True, energy=10)
+                        model=self, moore=True, energy=self.wolf_energy)
             self.schedule.add(wolf)
             self.grid.place_agent(wolf, (x, y))
 
@@ -119,11 +131,8 @@ class WolfSheep(Model):
 
     def step(self):
         self.schedule.step()
-
         # Collect data
         self.datacollector.collect(self)
-
-        # ... to be completed
 
     def run_model(self, step_count=10):
         for i in range(step_count):
