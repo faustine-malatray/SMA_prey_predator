@@ -23,10 +23,13 @@ class Sheep(RandomWalker):
         """
 
         self.random_move()
-        self.energy -= 1
         # self.eat_grass()
-        # self.reproduce()
+        self.reproduce()
         self.exhaustion_death()
+
+    def random_move(self):
+        super().random_move()
+        self.energy -= 1
 
     def eat_grass(self):
         cell = self.model.grid.get_neighbors(
@@ -40,12 +43,15 @@ class Sheep(RandomWalker):
                     break
 
     def reproduce(self):
-        if self.energy > self.model.sheep_reproduce:
+        # le 2 est arbitraire, on pourrait le mettre en paramètre
+        if (self.energy > 2) and (self.model.random.random() <= self.model.sheep_reproduce):
             # Si le mouton a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
             kid = Sheep(self.model.next_id(), self.pos,
-                        self.model, self.moore, None)
+                        self.model, self.moore, energy=10)
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
+
+            self.energy -= 2
 
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
@@ -67,10 +73,13 @@ class Wolf(RandomWalker):
 
     def step(self):
         self.random_move()
-        self.energy -= 1
         # self.eat_sheep()
-        # self.reproduce()
+        self.reproduce()
         self.exhaustion_death()
+
+    def random_move(self):
+        super().random_move()
+        self.energy -= 1
 
     def eat_sheep(self):
         cell = self.model.grid.get_neighbors(
@@ -84,10 +93,11 @@ class Wolf(RandomWalker):
                     break
 
     def reproduce(self):
-        if self.energy > self.model.wolf_reproduce:
+        # le 2 est arbitraire, on pourrait le mettre en paramètre
+        if (self.energy > self.model.wolf_reproduce) and (self.model.random.random() <= self.model.wolf_reproduce):
             # Si le loup a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
             kid = Wolf(self.model.next_id(), self.pos,
-                       self.model, self.moore, None)
+                       self.model, self.moore, energy=10)
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
 

@@ -109,7 +109,6 @@ class WolfSheep(Model):
             self.grid.place_agent(wolf, (x, y))
 
         # Create grass patches
-        # ... to be completed
 
     def step(self):
         self.schedule.step()
