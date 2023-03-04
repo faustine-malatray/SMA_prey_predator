@@ -6,19 +6,6 @@ from prey_predator.agents import Wolf, Sheep, GrassPatch
 from prey_predator.model import WolfSheep
 
 
-# def agent_portrayal(agent):
-#     portrayal = {"Shape": "circle", "Filled": "true", "r": 0.5}
-
-#     if agent.wealth > 0:
-#         portrayal["Color"] = "red"
-#         portrayal["Layer"] = 0
-#     else:
-#         portrayal["Color"] = "grey"
-#         portrayal["Layer"] = 1
-#         portrayal["r"] = 0.2
-#     return portrayal
-
-
 def wolf_sheep_portrayal(agent):
     if agent is None:
         pass
@@ -54,11 +41,20 @@ chart_element = ChartModule(
      {"Label": "Sheep", "Color": "#c7c5c5"}]
 )
 
-model_params = {"initial_sheep": 50,
-                "initial_wolves": 10}  # à modifier
+model_params = {"height": 20,
+                "width": 20,
+                "initial_sheep": UserSettableParameter("number", "Initial Number of Sheeps", value=10),
+                "initial_wolves": UserSettableParameter("number", "Initial Number of Wolves", value=3),
+                "sheep_reproduce": UserSettableParameter("slider", "Sheep Reproducing Probability", value=0.5, min_value=0, max_value=1, step=0.01),
+                "wolf_reproduce": UserSettableParameter("slider", "Wolves Reproducing Probability", value=0.1, min_value=0, max_value=1, step=0.01),
+                "wolf_gain_from_food": UserSettableParameter("number", "Wolves Energy points with Food", value=5),
+                "grass": UserSettableParameter("checkbox", "Are Sheeps eating Grass", value=True),
+                "grass_regrowth_time": UserSettableParameter("number", "Grass Regrowth Time", value=5),
+                "sheep_gain_from_food": UserSettableParameter("number", "Sheep Energy points with Food", value=3)}
 
-server = ModularServer(
-    WolfSheep, [canvas_element,
-                chart_element], "Prey Predator Model", model_params
-)
+server = ModularServer(WolfSheep,
+                       [canvas_element,
+                        chart_element],
+                       "Prey Predator Model",
+                       model_params)
 server.port = 8521

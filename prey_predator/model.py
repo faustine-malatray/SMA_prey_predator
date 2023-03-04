@@ -43,16 +43,16 @@ class WolfSheep(Model):
 
     def __init__(
         self,
-        height=20,
-        width=20,
-        initial_sheep=100,
-        initial_wolves=50,
-        sheep_reproduce=0.04,
-        wolf_reproduce=0.05,
-        wolf_gain_from_food=20,
-        grass=False,
-        grass_regrowth_time=30,
-        sheep_gain_from_food=4,
+        height,
+        width,
+        initial_sheep,
+        initial_wolves,
+        sheep_reproduce,
+        wolf_reproduce,
+        wolf_gain_from_food,
+        grass,
+        grass_regrowth_time,
+        sheep_gain_from_food,
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -90,7 +90,7 @@ class WolfSheep(Model):
             }
         )
 
-        # Create sheep:
+        # Create sheeps:
         for i in range(initial_sheep):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
@@ -99,7 +99,7 @@ class WolfSheep(Model):
             self.schedule.add(sheep)
             self.grid.place_agent(sheep, (x, y))
 
-        # Create wolves
+        # Create wolves:
         for i in range(initial_wolves):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
