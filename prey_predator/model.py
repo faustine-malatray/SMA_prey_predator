@@ -109,6 +109,13 @@ class WolfSheep(Model):
             self.grid.place_agent(wolf, (x, y))
 
         # Create grass patches
+        for i in range(self.width):
+            for j in range(self.height):
+                if self.random.random() < 0.5:
+                    grass = GrassPatch(self.next_id(), pos=(
+                        i, j), model=self, fully_grown=True, countdown=self.grass_regrowth_time)
+                    self.schedule.add(grass)
+                    self.grid.place_agent(grass, (i, j))
 
     def step(self):
         self.schedule.step()

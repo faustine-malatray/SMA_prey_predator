@@ -1,6 +1,10 @@
 from mesa import Agent
 from prey_predator.random_walk import RandomWalker
 
+###############################
+#### SHEEP CLASS ##############
+###############################
+
 
 class Sheep(RandomWalker):
     """
@@ -23,7 +27,7 @@ class Sheep(RandomWalker):
         """
 
         self.random_move()
-        # self.eat_grass()
+        self.eat_grass()
         self.reproduce()
         self.exhaustion_death()
 
@@ -37,9 +41,10 @@ class Sheep(RandomWalker):
         )
         if cell:
             for thing in cell:
-                if type(thing) == GrassPatch:
-                    self.energy += self.model.wolf_gain_from_food
+                if (type(thing) == GrassPatch) and (thing.grown):
+                    self.energy += self.model.sheep_gain_from_food
                     thing.gets_eaten()
+                    print("sheep ate grass")
                     break
 
     def reproduce(self):
@@ -50,12 +55,19 @@ class Sheep(RandomWalker):
                         self.model, self.moore, energy=10)
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
+            print("sheep reproduced")
 
             self.energy -= 2
 
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
             self.dies()
+            print("sheep died")
+
+
+###############################
+#### WOLF CLASS ###############
+###############################
 
 
 class Wolf(RandomWalker):
@@ -73,7 +85,7 @@ class Wolf(RandomWalker):
 
     def step(self):
         self.random_move()
-        # self.eat_sheep()
+        self.eat_sheep()
         self.reproduce()
         self.exhaustion_death()
 
@@ -86,25 +98,35 @@ class Wolf(RandomWalker):
             self.pos, moore=True, radius=0, include_center=True
         )
         if cell:
+
             for thing in cell:
                 if type(thing) == Sheep:
                     self.energy += self.model.wolf_gain_from_food
                     thing.dies()
+                    print("wolf ate a sheep")
                     break
 
     def reproduce(self):
         # le 2 est arbitraire, on pourrait le mettre en paramètre
-        if (self.energy > self.model.wolf_reproduce) and (self.model.random.random() <= self.model.wolf_reproduce):
+        if (self.energy > 2) and (self.model.random.random() <= self.model.wolf_reproduce):
             # Si le loup a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
             kid = Wolf(self.model.next_id(), self.pos,
                        self.model, self.moore, energy=10)
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
+            print("wolf reproduced")
+
+            self.energy -= 2
 
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
+            print("wolf died")
             self.dies()
 
+
+###############################
+#### GRASSPATCH CLASS #########
+###############################
 
 class GrassPatch(Agent):
     """
