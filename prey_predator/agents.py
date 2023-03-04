@@ -11,7 +11,7 @@ class Sheep(RandomWalker):
 
     energy = None
 
-    def __init__(self, unique_id, pos, model, moore, energy=None):
+    def __init__(self, unique_id, pos, model, moore, energy):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
 
@@ -21,11 +21,12 @@ class Sheep(RandomWalker):
         We consider that if the sheep moved and is out of energy, but eats immediately after, it can stay alive.
         Moving reduces the sheep's energy by 1.
         """
-        self.exhaustion_death()
+
         self.random_move()
         self.energy -= 1
-        self.eat_grass()
-        self.reproduce()
+        # self.eat_grass()
+        # self.reproduce()
+        self.exhaustion_death()
 
     def eat_grass(self):
         cell = self.model.grid.get_neighbors(
@@ -41,9 +42,10 @@ class Sheep(RandomWalker):
     def reproduce(self):
         if self.energy > self.model.sheep_reproduce:
             # Si le mouton a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
-            kid = Sheep(self.model.next_id(), self.pos, self.model, self.moore, None)
+            kid = Sheep(self.model.next_id(), self.pos,
+                        self.model, self.moore, None)
             self.model.schedule.add(kid)
-            self.grid.place_agent(kid, self.pos)
+            self.model.grid.place_agent(kid, self.pos)
 
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
@@ -59,16 +61,16 @@ class Wolf(RandomWalker):
 
     energy = None
 
-    def __init__(self, unique_id, pos, model, moore, energy=None):
+    def __init__(self, unique_id, pos, model, moore, energy):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
 
     def step(self):
-        self.exhaustion_death()
         self.random_move()
         self.energy -= 1
-        self.eat_sheep()
-        self.reproduce()
+        # self.eat_sheep()
+        # self.reproduce()
+        self.exhaustion_death()
 
     def eat_sheep(self):
         cell = self.model.grid.get_neighbors(
@@ -84,9 +86,10 @@ class Wolf(RandomWalker):
     def reproduce(self):
         if self.energy > self.model.wolf_reproduce:
             # Si le loup a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
-            kid = Wolf(self.model.next_id(), self.pos, self.model, self.moore, None)
+            kid = Wolf(self.model.next_id(), self.pos,
+                       self.model, self.moore, None)
             self.model.schedule.add(kid)
-            self.grid.place_agent(kid, self.pos)
+            self.model.grid.place_agent(kid, self.pos)
 
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):

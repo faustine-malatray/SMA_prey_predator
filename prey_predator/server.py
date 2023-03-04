@@ -6,22 +6,22 @@ from prey_predator.agents import Wolf, Sheep, GrassPatch
 from prey_predator.model import WolfSheep
 
 
-def agent_portrayal(agent):
-    portrayal = {"Shape": "circle", "Filled": "true", "r": 0.5}
+# def agent_portrayal(agent):
+#     portrayal = {"Shape": "circle", "Filled": "true", "r": 0.5}
 
-    if agent.wealth > 0:
-        portrayal["Color"] = "red"
-        portrayal["Layer"] = 0
-    else:
-        portrayal["Color"] = "grey"
-        portrayal["Layer"] = 1
-        portrayal["r"] = 0.2
-    return portrayal
+#     if agent.wealth > 0:
+#         portrayal["Color"] = "red"
+#         portrayal["Layer"] = 0
+#     else:
+#         portrayal["Color"] = "grey"
+#         portrayal["Layer"] = 1
+#         portrayal["r"] = 0.2
+#     return portrayal
 
 
 def wolf_sheep_portrayal(agent):
     if agent is None:
-        return
+        pass
 
     portrayal = {"Shape": "circle", "Filled": "true", "Layer": 0}
 
@@ -40,14 +40,17 @@ def wolf_sheep_portrayal(agent):
     return portrayal
 
 
+## CanvasGrid(portrayal, grid_width, grid_height, canvas_width, canvas_height)
 canvas_element = CanvasGrid(wolf_sheep_portrayal, 20, 20, 500, 500)
 chart_element = ChartModule(
-    [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
+    [{"Label": "Wolves", "Color": "#000000"}, {
+        "Label": "Sheep", "Color": "#c7c5c5"}]
 )
 
-model_params = {"initial_sheep" : 1, "initial_wolves" : 0}# à modifier
+model_params = {"initial_sheep": 10, "initial_wolves": 10}  # à modifier
 
 server = ModularServer(
-    WolfSheep, [canvas_element, chart_element], "Prey Predator Model", model_params
+    WolfSheep, [canvas_element,
+                chart_element], "Prey Predator Model", model_params
 )
 server.port = 8521
