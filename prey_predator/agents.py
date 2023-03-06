@@ -18,6 +18,7 @@ class Sheep(RandomWalker):
     def __init__(self, unique_id, pos, model, moore, energy):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
+        self.age = 0
 
     def step(self):
         """
@@ -29,6 +30,7 @@ class Sheep(RandomWalker):
         self.random_move()
         self.eat_grass()
         self.reproduce()
+        self.aging()
         self.exhaustion_death()
 
     def random_move(self):
@@ -59,6 +61,11 @@ class Sheep(RandomWalker):
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
             self.dies()
+        elif self.age >= self.model.sheep_life_expectancy:
+            self.dies()
+
+    def aging(self):
+        self.age += 1
 
 
 ###############################
@@ -78,11 +85,13 @@ class Wolf(RandomWalker):
     def __init__(self, unique_id, pos, model, moore, energy):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
+        self.age = 0
 
     def step(self):
         self.random_move()
         self.eat_sheep()
         self.reproduce()
+        self.aging()
         self.exhaustion_death()
 
     def random_move(self):
@@ -113,6 +122,11 @@ class Wolf(RandomWalker):
     def exhaustion_death(self):
         if self.energy and (self.energy <= 0):
             self.dies()
+        elif self.age >= self.model.wolf_life_expectancy:
+            self.dies()
+
+    def aging(self):
+        self.age += 1
 
 
 ###############################

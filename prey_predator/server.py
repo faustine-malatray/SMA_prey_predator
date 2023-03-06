@@ -56,7 +56,9 @@ model_params = {"height": 20,
                 "sheep_reproduction_energy": UserSettableParameter("number", "Sheep energy loss with reproduction", value=2),
                 "wolf_reproduction_energy": UserSettableParameter("number", "Wolves energy loss with reproduction", value=3),
                 "grass": UserSettableParameter("checkbox", "Are Sheeps eating Grass", value=True),
-                "grass_regrowth_time": UserSettableParameter("number", "Grass Regrowth Time", value=2)
+                "grass_regrowth_time": UserSettableParameter("number", "Grass Regrowth Time", value=2),
+                "sheep_life_expectancy": UserSettableParameter("number", "Sheep life expectancy", value=20),
+                "wolf_life_expectancy": UserSettableParameter("number", "Wolf life expectancy", value=30)
                 }
 
 server = ModularServer(WolfSheep,

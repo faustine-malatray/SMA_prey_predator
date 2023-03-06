@@ -58,7 +58,9 @@ class WolfSheep(Model):
         sheep_move_energy,
         wolf_move_energy,
         sheep_energy,
-        wolf_energy
+        wolf_energy,
+        sheep_life_expectancy,
+        wolf_life_expectancy
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -92,6 +94,9 @@ class WolfSheep(Model):
         self.wolf_move_energy = wolf_move_energy
         self.sheep_energy = sheep_energy
         self.wolf_energy = wolf_energy
+
+        self.sheep_life_expectancy = sheep_life_expectancy
+        self.wolf_life_expectancy = wolf_life_expectancy
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
