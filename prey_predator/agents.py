@@ -19,6 +19,7 @@ class Sheep(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
         self.age = 0
+        self.last_ate = 0
 
     def step(self):
         """
@@ -41,18 +42,30 @@ class Sheep(RandomWalker):
         cell = self.model.grid.get_neighbors(
             self.pos, moore=True, radius=0, include_center=True
         )
-        if cell:
+        ate = False
+        if cell and (self.last_ate >= self.model.sheep_min_digestion):
             for thing in cell:
                 if (type(thing) == GrassPatch) and (thing.grown):
                     self.energy += self.model.sheep_gain_from_food
+                    self.last_ate = 0
                     thing.gets_eaten()
+                    ate = True
                     break
+        if not ate:
+            self.last_ate += 1
 
     def reproduce(self):
-        if (self.energy > self.model.sheep_reproduction_energy) and (self.model.random.random() <= self.model.sheep_reproduce):
+        if (self.energy > self.model.sheep_reproduction_energy) and (
+            self.model.random.random() <= self.model.sheep_reproduce
+        ):
             # Si le mouton a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
-            kid = Sheep(self.model.next_id(), self.pos,
-                        self.model, self.moore, energy=self.model.sheep_energy)
+            kid = Sheep(
+                self.model.next_id(),
+                self.pos,
+                self.model,
+                self.moore,
+                energy=self.model.sheep_energy,
+            )
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
 
@@ -86,6 +99,7 @@ class Wolf(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
         self.age = 0
+        self.last_ate = 0
 
     def step(self):
         self.random_move()
@@ -102,18 +116,30 @@ class Wolf(RandomWalker):
         cell = self.model.grid.get_neighbors(
             self.pos, moore=True, radius=0, include_center=True
         )
-        if cell:
+        ate = False
+        if cell and (self.last_ate >= self.model.wolf_min_digestion):
             for thing in cell:
                 if type(thing) == Sheep:
                     self.energy += self.model.wolf_gain_from_food
+                    self.last_ate = 0
+                    ate = True
                     thing.dies()
                     break
+        if not ate:
+            self.last_ate += 1
 
     def reproduce(self):
-        if (self.energy > self.model.wolf_reproduction_energy) and (self.model.random.random() <= self.model.wolf_reproduce):
+        if (self.energy > self.model.wolf_reproduction_energy) and (
+            self.model.random.random() <= self.model.wolf_reproduce
+        ):
             # Si le loup a assez d'énergie, on crée un agent enfant, qu'on ajoute à la grille et au schedule.
-            kid = Wolf(self.model.next_id(), self.pos,
-                       self.model, self.moore, energy=self.model.wolf_energy)
+            kid = Wolf(
+                self.model.next_id(),
+                self.pos,
+                self.model,
+                self.moore,
+                energy=self.model.wolf_energy,
+            )
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
 
@@ -132,6 +158,7 @@ class Wolf(RandomWalker):
 ###############################
 #### GRASSPATCH CLASS #########
 ###############################
+
 
 class GrassPatch(Agent):
     """

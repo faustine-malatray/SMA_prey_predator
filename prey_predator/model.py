@@ -60,7 +60,9 @@ class WolfSheep(Model):
         sheep_energy,
         wolf_energy,
         sheep_life_expectancy,
-        wolf_life_expectancy
+        wolf_life_expectancy,
+        sheep_min_digestion,
+        wolf_min_digestion,
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -97,6 +99,8 @@ class WolfSheep(Model):
 
         self.sheep_life_expectancy = sheep_life_expectancy
         self.wolf_life_expectancy = wolf_life_expectancy
+        self.sheep_min_digestion = sheep_min_digestion
+        self.wolf_min_digestion = wolf_min_digestion
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
@@ -111,8 +115,13 @@ class WolfSheep(Model):
         for i in range(initial_sheep):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
-            sheep = Sheep(self.next_id(), pos=(x, y),
-                          model=self, moore=True, energy=self.sheep_energy)
+            sheep = Sheep(
+                self.next_id(),
+                pos=(x, y),
+                model=self,
+                moore=True,
+                energy=self.sheep_energy,
+            )
             self.schedule.add(sheep)
             self.grid.place_agent(sheep, (x, y))
 
@@ -120,8 +129,13 @@ class WolfSheep(Model):
         for i in range(initial_wolves):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
-            wolf = Wolf(self.next_id(), pos=(x, y),
-                        model=self, moore=True, energy=self.wolf_energy)
+            wolf = Wolf(
+                self.next_id(),
+                pos=(x, y),
+                model=self,
+                moore=True,
+                energy=self.wolf_energy,
+            )
             self.schedule.add(wolf)
             self.grid.place_agent(wolf, (x, y))
 
@@ -129,8 +143,13 @@ class WolfSheep(Model):
         for i in range(self.width):
             for j in range(self.height):
                 if self.random.random() < 0.5:
-                    grass = GrassPatch(self.next_id(), pos=(
-                        i, j), model=self, fully_grown=True, countdown=self.grass_regrowth_time)
+                    grass = GrassPatch(
+                        self.next_id(),
+                        pos=(i, j),
+                        model=self,
+                        fully_grown=True,
+                        countdown=self.grass_regrowth_time,
+                    )
                     self.schedule.add(grass)
                     self.grid.place_agent(grass, (i, j))
 
