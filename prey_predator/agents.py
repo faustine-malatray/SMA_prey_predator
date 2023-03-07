@@ -19,7 +19,6 @@ class Sheep(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
         self.age = 0
-        self.last_ate = 0
 
     def step(self):
         """
@@ -29,7 +28,6 @@ class Sheep(RandomWalker):
         """
 
         self.random_move()
-        self.eat_grass()
         self.reproduce()
         self.aging()
         self.exhaustion_death()
@@ -37,22 +35,6 @@ class Sheep(RandomWalker):
     def random_move(self):
         super().random_move()
         self.energy -= self.model.sheep_move_energy
-
-    def eat_grass(self):
-        cell = self.model.grid.get_neighbors(
-            self.pos, moore=True, radius=0, include_center=True
-        )
-        ate = False
-        if cell and (self.last_ate >= self.model.sheep_min_digestion):
-            for thing in cell:
-                if (type(thing) == GrassPatch) and (thing.grown):
-                    self.energy += self.model.sheep_gain_from_food
-                    self.last_ate = 0
-                    thing.gets_eaten()
-                    ate = True
-                    break
-        if not ate:
-            self.last_ate += 1
 
     def reproduce(self):
         if (self.energy > self.model.sheep_reproduction_energy) and (
@@ -153,39 +135,3 @@ class Wolf(RandomWalker):
 
     def aging(self):
         self.age += 1
-
-
-###############################
-#### GRASSPATCH CLASS #########
-###############################
-
-
-class GrassPatch(Agent):
-    """
-    A patch of grass that grows at a fixed rate and it is eaten by sheep
-    """
-
-    def __init__(self, unique_id, pos, model, fully_grown, countdown):
-        """
-        Creates a new patch of grass
-
-        Args:
-            grown: (boolean) Whether the patch of grass is fully grown or not
-            countdown: Time for the patch of grass to be fully grown again
-        """
-        super().__init__(unique_id, model)
-        self.grown = fully_grown
-        # on initialisera avec la valeur self.model.grass_regrowth_time
-        self.countdown = countdown
-
-    def step(self):
-        self.countdown -= 1
-        self.update_growth()
-
-    def update_growth(self):
-        if (not self.grown) and (self.countdown <= 0):
-            self.grown = True
-
-    def gets_eaten(self):
-        self.countdown = self.model.grass_regrowth_time
-        self.grown = False

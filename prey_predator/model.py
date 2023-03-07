@@ -13,7 +13,7 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 
-from prey_predator.agents import Sheep, Wolf, GrassPatch
+from prey_predator.agents import Sheep, Wolf
 from prey_predator.schedule import RandomActivationByBreed
 
 
@@ -33,10 +33,6 @@ class WolfSheep(Model):
 
     wolf_gain_from_food = 20
 
-    grass = False
-    grass_regrowth_time = 30
-    sheep_gain_from_food = 4
-
     description = (
         "A model for simulating wolf and sheep (predator-prey) ecosystem modelling."
     )
@@ -50,9 +46,7 @@ class WolfSheep(Model):
         sheep_reproduce,
         wolf_reproduce,
         wolf_gain_from_food,
-        grass,
-        grass_regrowth_time,
-        sheep_gain_from_food,
+
         sheep_reproduction_energy,
         wolf_reproduction_energy,
         sheep_move_energy,
@@ -61,7 +55,7 @@ class WolfSheep(Model):
         wolf_energy,
         sheep_life_expectancy,
         wolf_life_expectancy,
-        sheep_min_digestion,
+
         wolf_min_digestion,
     ):
         """
@@ -87,9 +81,7 @@ class WolfSheep(Model):
         self.sheep_reproduce = sheep_reproduce
         self.wolf_reproduce = wolf_reproduce
         self.wolf_gain_from_food = wolf_gain_from_food
-        self.grass = grass
-        self.grass_regrowth_time = grass_regrowth_time
-        self.sheep_gain_from_food = sheep_gain_from_food
+
         self.sheep_reproduction_energy = sheep_reproduction_energy
         self.wolf_reproduction_energy = wolf_reproduction_energy
         self.sheep_move_energy = sheep_move_energy
@@ -99,7 +91,7 @@ class WolfSheep(Model):
 
         self.sheep_life_expectancy = sheep_life_expectancy
         self.wolf_life_expectancy = wolf_life_expectancy
-        self.sheep_min_digestion = sheep_min_digestion
+
         self.wolf_min_digestion = wolf_min_digestion
 
         self.schedule = RandomActivationByBreed(self)
@@ -138,20 +130,6 @@ class WolfSheep(Model):
             )
             self.schedule.add(wolf)
             self.grid.place_agent(wolf, (x, y))
-
-        # Create grass patches
-        for i in range(self.width):
-            for j in range(self.height):
-                if self.random.random() < 0.5:
-                    grass = GrassPatch(
-                        self.next_id(),
-                        pos=(i, j),
-                        model=self,
-                        fully_grown=True,
-                        countdown=self.grass_regrowth_time,
-                    )
-                    self.schedule.add(grass)
-                    self.grid.place_agent(grass, (i, j))
 
     def step(self):
         self.schedule.step()
