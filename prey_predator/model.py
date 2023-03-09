@@ -21,21 +21,35 @@ class WolfSheep(Model):
     """
     Wolf-Sheep Predation Model
     """
-
     height = 20
     width = 20
 
-    initial_sheep = 100
-    initial_wolves = 50
+    sheep_energy = 10
+    wolf_energy = 10
 
-    sheep_reproduce = 0.04
-    wolf_reproduce = 0.05
+    initial_sheep = 150
+    initial_wolves = 100
 
+    sheep_reproduce = 0.15
+    wolf_reproduce = 0.11
+
+    sheep_gain_from_food = 5
     wolf_gain_from_food = 20
 
-    grass = False
-    grass_regrowth_time = 30
-    sheep_gain_from_food = 4
+    sheep_move_energy = 1
+    wolf_move_energy = 1
+
+    sheep_reproduction_energy = 2
+    wolf_reproduction_energy = 3
+
+    sheep_min_digestion = 3
+    wolf_min_digestion = 10
+
+    grass = True
+    grass_regrowth_time = 20
+
+    sheep_life_expectancy = 45
+    wolf_life_expectancy = 100
 
     description = (
         "A model for simulating wolf and sheep (predator-prey) ecosystem modelling."
@@ -45,73 +59,59 @@ class WolfSheep(Model):
         self,
         height,
         width,
+        sheep_energy,
+        wolf_energy,
         initial_sheep,
         initial_wolves,
         sheep_reproduce,
         wolf_reproduce,
-        wolf_gain_from_food,
-        grass,
-        grass_regrowth_time,
         sheep_gain_from_food,
-        sheep_reproduction_energy,
-        wolf_reproduction_energy,
+        wolf_gain_from_food,
         sheep_move_energy,
         wolf_move_energy,
-        sheep_energy,
-        wolf_energy,
-        sheep_life_expectancy,
-        wolf_life_expectancy,
+        sheep_reproduction_energy,
+        wolf_reproduction_energy,
         sheep_min_digestion,
         wolf_min_digestion,
+        grass,
+        grass_regrowth_time,
+        sheep_life_expectancy,
+        wolf_life_expectancy
     ):
         """
-        Create a new Wolf-Sheep model with the given parameters.
-
-        Args:
-            height: Grid height
-            width: Grid width
-            initial_sheep: Number of sheep to start with
-            initial_wolves: Number of wolves to start with
-            sheep_reproduce: Probability of each sheep reproducing each step
-            wolf_reproduce: Probability of each wolf reproducing each step
-            wolf_gain_from_food: Energy a wolf gains from eating a sheep
-            grass: Whether to have the sheep eat grass for energy
-            grass_regrowth_time: How long it takes for a grass patch to regrowonce it is eaten
-            sheep_gain_from_food: Energy sheep gain from grass, if enabled
-            sheep_reproduction_energy: Energy sheep lose from reproduction
-            wolf_reproduction_energy: Energy wolves lose from reproduction
-            sheep_move_energy: Energy sheep lose from moving
-            wolf_move_energy: Energy wolves lose from moving
-            sheep_energy: Initial energy sheep have
-            wolf_energy: Initial energy wolves have
-            sheep_life_expectancy: Maximum age sheep can reach
-            wolf_life_expectancy: Maximum age wolves can reach
-            sheep_min_digestion: Minimum steps between two feedings for sheep
-            wolf_min_digestion: Minimum steps between two feedings for wolves
+        Create a new Wolf-Sheep model with the given self-explanatory parameters.
         """
         super().__init__()
         # Set parameters
         self.height = height
         self.width = width
-        self.initial_sheep = initial_sheep
-        self.initial_wolves = initial_wolves
-        self.sheep_reproduce = sheep_reproduce
-        self.wolf_reproduce = wolf_reproduce
-        self.wolf_gain_from_food = wolf_gain_from_food
-        self.grass = grass
-        self.grass_regrowth_time = grass_regrowth_time
-        self.sheep_gain_from_food = sheep_gain_from_food
-        self.sheep_reproduction_energy = sheep_reproduction_energy
-        self.wolf_reproduction_energy = wolf_reproduction_energy
-        self.sheep_move_energy = sheep_move_energy
-        self.wolf_move_energy = wolf_move_energy
+
         self.sheep_energy = sheep_energy
         self.wolf_energy = wolf_energy
 
-        self.sheep_life_expectancy = sheep_life_expectancy
-        self.wolf_life_expectancy = wolf_life_expectancy
+        self.initial_sheep = initial_sheep
+        self.initial_wolves = initial_wolves
+
+        self.sheep_reproduce = sheep_reproduce
+        self.wolf_reproduce = wolf_reproduce
+
+        self.sheep_gain_from_food = sheep_gain_from_food
+        self.wolf_gain_from_food = wolf_gain_from_food
+
+        self.sheep_move_energy = sheep_move_energy
+        self.wolf_move_energy = wolf_move_energy
+
+        self.sheep_reproduction_energy = sheep_reproduction_energy
+        self.wolf_reproduction_energy = wolf_reproduction_energy
+
         self.sheep_min_digestion = sheep_min_digestion
         self.wolf_min_digestion = wolf_min_digestion
+
+        self.grass = grass
+        self.grass_regrowth_time = grass_regrowth_time
+
+        self.sheep_life_expectancy = sheep_life_expectancy
+        self.wolf_life_expectancy = wolf_life_expectancy
 
         self.schedule = RandomActivationByBreed(self)
         self.grid = MultiGrid(self.height, self.width, torus=True)
@@ -157,18 +157,19 @@ class WolfSheep(Model):
         # Create grass patches :
         # Grass patches are created with a probability of 0.5 in each grid cell.
         # They all are created with the same grass_regrowth_time.
-        for i in range(self.width):
-            for j in range(self.height):
-                if self.random.random() < 0.5:
-                    grass = GrassPatch(
-                        self.next_id(),
-                        pos=(i, j),
-                        model=self,
-                        fully_grown=True,
-                        countdown=self.grass_regrowth_time,
-                    )
-                    self.schedule.add(grass)
-                    self.grid.place_agent(grass, (i, j))
+        if self.grass:
+            for i in range(self.width):
+                for j in range(self.height):
+                    if self.random.random() < 0.5:
+                        grass = GrassPatch(
+                            self.next_id(),
+                            pos=(i, j),
+                            model=self,
+                            fully_grown=True,
+                            countdown=self.grass_regrowth_time,
+                        )
+                        self.schedule.add(grass)
+                        self.grid.place_agent(grass, (i, j))
 
     def step(self):
         self.schedule.step()

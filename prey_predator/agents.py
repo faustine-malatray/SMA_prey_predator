@@ -8,7 +8,7 @@ from prey_predator.random_walk import RandomWalker
 
 class Sheep(RandomWalker):
     """
-    A sheep that walks around, reproduces (asexually) and gets eaten.
+    A sheep that walks around, eats grass, reproduces (asexually) and gets eaten.
     The init is the same as the RandomWalker, with some additionnal attributes : the energy, the age, and the last_ate indicator.
     """
 
@@ -29,7 +29,9 @@ class Sheep(RandomWalker):
         """
 
         self.random_move()
-        self.eat_grass()
+        # if the model takes into account grass patches
+        if self.model.grass:
+            self.eat_grass()
         self.reproduce()
         self.aging()
         self.exhaustion_death()
@@ -48,18 +50,25 @@ class Sheep(RandomWalker):
         sheep_min_digestion long before eating again), and if there's a fully grown grass patch in the cell,
         the sheep eats, gains new energy, and the grasspatch's gets_eaten method is called.
         Otherwise, the last_ate attribute is incremented."""
+        # get_neighbors with radius=0 and include_center=True gets the agent in
+        # the same cell
         cell = self.model.grid.get_neighbors(
             self.pos, moore=True, radius=0, include_center=True
         )
         ate = False
+        # if there is a grass patch in the cell + the sheep is hungry
         if cell and (self.last_ate >= self.model.sheep_min_digestion):
             for thing in cell:
+                # find the grass patch agent on the cell and checks if it can be eaten
                 if (type(thing) == GrassPatch) and (thing.grown):
+                    # sheep eats, hungryness variables reinitialized
+                    # grass patch variables reinitialized
                     self.energy += self.model.sheep_gain_from_food
                     self.last_ate = 0
                     thing.gets_eaten()
                     ate = True
                     break
+        # sheep didn't eat, hungyness increases
         if not ate:
             self.last_ate += 1
 
@@ -79,9 +88,10 @@ class Sheep(RandomWalker):
                 self.moore,
                 energy=self.model.sheep_energy,
             )
+            # new sheep added to the model
             self.model.schedule.add(kid)
             self.model.grid.place_agent(kid, self.pos)
-
+            # old sheep looses reproduction energy
             self.energy -= self.model.sheep_reproduction_energy
 
     def exhaustion_death(self):
@@ -145,18 +155,23 @@ class Wolf(RandomWalker):
         wolf_min_digestion long before eating again), and if there's a sheep in the cell,
         the wolf eats, gains new energy, and the sheep's dies method is called.
         Otherwise, the last_ate attribute is incremented."""
+        # other agents in the same cell
         cell = self.model.grid.get_neighbors(
             self.pos, moore=True, radius=0, include_center=True
         )
         ate = False
+        # if there are agents in the cell and the wolf is hungy
         if cell and (self.last_ate >= self.model.wolf_min_digestion):
             for thing in cell:
+                # eats the first sheep agent it can find
                 if type(thing) == Sheep:
+                    # sheep dies and wolf gets hungryness variables reinitialized
                     self.energy += self.model.wolf_gain_from_food
                     self.last_ate = 0
                     ate = True
                     thing.dies()
                     break
+        # wolf didn't eat, hungryness grows
         if not ate:
             self.last_ate += 1
 

@@ -43,45 +43,49 @@ def wolf_sheep_portrayal(agent):
     return portrayal
 
 
-## CanvasGrid(portrayal, grid_width, grid_height, canvas_width, canvas_height)
+## CanvasGrid(portrayal, nb_cells_width, nb_cells_height, canvas_width, canvas_height)
+# the grid on which the agents are
 canvas_element = CanvasGrid(wolf_sheep_portrayal, 20, 20, 500, 500)
+# the plot of the populations wrt time
 chart_element = ChartModule(
-    [{"Label": "Wolves", "Color": "#000000"}, {"Label": "Sheep", "Color": "#c7c5c5"}]
+    [{"Label": "Wolves", "Color": "#000000"}, {
+        "Label": "Sheep", "Color": "#c7c5c5"}]
 )
 
-## Below are all the parameters the user can adjust when running the server.
+# Below are all the parameters the user can adjust when running the server.
+# The values for each parameters are the ones used to compute our graph in our model restitution
 model_params = {
     "height": 20,
     "width": 20,
     "sheep_energy": UserSettableParameter("number", "Energy of a Sheep", value=10),
     "wolf_energy": UserSettableParameter("number", "Energy of a Wolf", value=10),
     "initial_sheep": UserSettableParameter(
-        "number", "Initial Number of Sheeps", value=10
+        "number", "Initial Number of Sheeps", value=150
     ),
     "initial_wolves": UserSettableParameter(
-        "number", "Initial Number of Wolves", value=10
+        "number", "Initial Number of Wolves", value=100
     ),
     "sheep_reproduce": UserSettableParameter(
         "slider",
         "Sheep Reproducing Probability",
-        value=0.2,
+        value=0.15,
         min_value=0,
-        max_value=1,
+        max_value=0.5,
         step=0.01,
     ),
     "wolf_reproduce": UserSettableParameter(
         "slider",
         "Wolves Reproducing Probability",
-        value=0.05,
+        value=0.11,
         min_value=0,
-        max_value=1,
+        max_value=0.5,
         step=0.01,
     ),
     "sheep_gain_from_food": UserSettableParameter(
-        "number", "Sheep Energy points with Food", value=3
+        "number", "Sheep Energy points with Food", value=5
     ),
     "wolf_gain_from_food": UserSettableParameter(
-        "number", "Wolves Energy points with Food", value=5
+        "number", "Wolves Energy points with Food", value=20
     ),
     "sheep_move_energy": UserSettableParameter(
         "number", "Sheep energy loss with movement", value=1
@@ -97,24 +101,25 @@ model_params = {
     ),
     "grass": UserSettableParameter("checkbox", "Are Sheeps eating Grass", value=True),
     "grass_regrowth_time": UserSettableParameter(
-        "number", "Grass Regrowth Time", value=2
+        "number", "Grass Regrowth Time", value=15
     ),
     "sheep_life_expectancy": UserSettableParameter(
-        "number", "Sheep life expectancy", value=20
+        "number", "Sheep life expectancy", value=45
     ),
     "wolf_life_expectancy": UserSettableParameter(
-        "number", "Wolf life expectancy", value=30
+        "number", "Wolf life expectancy", value=100
     ),
     "sheep_min_digestion": UserSettableParameter(
         "number", "Sheep digestion time", value=3
     ),
     "wolf_min_digestion": UserSettableParameter(
-        "number", "Wolf digestion time", value=5
+        "number", "Wolf digestion time", value=10
     ),
 }
 
 
 server = ModularServer(
-    WolfSheep, [canvas_element, chart_element], "Prey Predator Model", model_params
+    WolfSheep, [canvas_element,
+                chart_element], "Prey Predator Model", model_params
 )
 server.port = 8521
