@@ -7,21 +7,30 @@ from prey_predator.model import WolfSheep
 
 
 def wolf_sheep_portrayal(agent):
+    """
+    Function to call when displaying the agents on the grid.
+    Given an agent, this returns the proper portrayal."""
+
     if agent is None:
         pass
 
     portrayal = {"Filled": "true", "Layer": 0}
 
+    # The sheep will be portrayed using small grey circles.
     if type(agent) is Sheep:
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "grey"
         portrayal["r"] = 0.2
 
+    # The wolves will be portrayed using larger black circles.
     elif type(agent) is Wolf:
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "black"
         portrayal["r"] = 0.5
 
+    # The grass patches will be portrayed using a green square,
+    # and the color intensity will depend on whether or not the
+    # patch is fully grown.
     elif type(agent) is GrassPatch:
         portrayal["Shape"] = "rect"
         portrayal["w"] = 1
@@ -40,6 +49,7 @@ chart_element = ChartModule(
     [{"Label": "Wolves", "Color": "#000000"}, {"Label": "Sheep", "Color": "#c7c5c5"}]
 )
 
+## Below are all the parameters the user can adjust when running the server.
 model_params = {
     "height": 20,
     "width": 20,

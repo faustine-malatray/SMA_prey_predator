@@ -68,15 +68,26 @@ class WolfSheep(Model):
         Create a new Wolf-Sheep model with the given parameters.
 
         Args:
+            height: Grid height
+            width: Grid width
             initial_sheep: Number of sheep to start with
             initial_wolves: Number of wolves to start with
             sheep_reproduce: Probability of each sheep reproducing each step
             wolf_reproduce: Probability of each wolf reproducing each step
             wolf_gain_from_food: Energy a wolf gains from eating a sheep
             grass: Whether to have the sheep eat grass for energy
-            grass_regrowth_time: How long it takes for a grass patch to regrow
-                                 once it is eaten
-            sheep_gain_from_food: Energy sheep gain from grass, if enabled.
+            grass_regrowth_time: How long it takes for a grass patch to regrowonce it is eaten
+            sheep_gain_from_food: Energy sheep gain from grass, if enabled
+            sheep_reproduction_energy: Energy sheep lose from reproduction
+            wolf_reproduction_energy: Energy wolves lose from reproduction
+            sheep_move_energy: Energy sheep lose from moving
+            wolf_move_energy: Energy wolves lose from moving
+            sheep_energy: Initial energy sheep have
+            wolf_energy: Initial energy wolves have
+            sheep_life_expectancy: Maximum age sheep can reach
+            wolf_life_expectancy: Maximum age wolves can reach
+            sheep_min_digestion: Minimum steps between two feedings for sheep
+            wolf_min_digestion: Minimum steps between two feedings for wolves
         """
         super().__init__()
         # Set parameters
@@ -111,7 +122,9 @@ class WolfSheep(Model):
             }
         )
 
-        # Create sheeps:
+        # Create sheep :
+        # We choose to put initial sheep in random positions within the grid.
+        # They are initialized with sheep_energy energy.
         for i in range(initial_sheep):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
@@ -125,7 +138,9 @@ class WolfSheep(Model):
             self.schedule.add(sheep)
             self.grid.place_agent(sheep, (x, y))
 
-        # Create wolves:
+        # Create wolves :
+        # We choose to put initial wolves in random positions within the grid.
+        # They are initialized with wolf_energy energy.
         for i in range(initial_wolves):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
@@ -139,7 +154,9 @@ class WolfSheep(Model):
             self.schedule.add(wolf)
             self.grid.place_agent(wolf, (x, y))
 
-        # Create grass patches
+        # Create grass patches :
+        # Grass patches are created with a probability of 0.5 in each grid cell.
+        # They all are created with the same grass_regrowth_time.
         for i in range(self.width):
             for j in range(self.height):
                 if self.random.random() < 0.5:

@@ -36,13 +36,13 @@ class RandomWalker(Agent):
         Step one cell in any allowable direction.
         """
         # Pick the next cell from the adjacent cells.
-        next_moves = self.model.grid.get_neighborhood(
-            self.pos, self.moore, True)
+        next_moves = self.model.grid.get_neighborhood(self.pos, self.moore, True)
         next_move = self.random.choice(next_moves)
         # Now move:
         self.model.grid.move_agent(self, next_move)
 
     def dies(self):
-        # On enlève l'agent du grid et du scheduler
+        """
+        Method to call when a random walker dies. This removes the agent from the scheduler and from the grid."""
         self.model.grid.remove_agent(self)
         self.model.schedule.remove(self)
